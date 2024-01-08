@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import OpenAI from "openai";
-import apiKey from '../Api/Api';
+import apiKey from '../../apikey';
 
 const MyContext = createContext();
 
@@ -26,14 +26,12 @@ const MyContextProvider = ({children})=>{
       model: "gpt-3.5-turbo-1106",
       response_format: { type: "json_object" },
     });
-    console.log(JSON.parse(completion.choices[0].message.content));
+
     const responseObj = JSON.parse(completion.choices[0].message.content)
     for (const key in responseObj) {
       if (key.includes('_prompt')) {
         let prompt = responseObj[key];
         let image = await openai.images.generate({ model: "dall-e-3", prompt: prompt });
-        console.log(image.data);
-        console.log('image dtat');
         responseObj[key] =  image.data[0].url;
       }
     }
